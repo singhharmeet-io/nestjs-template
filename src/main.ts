@@ -19,13 +19,10 @@ async function bootstrap() {
   const config = app.get<ConfigService>(ConfigService);
 
   /** initialize middleware */
-  initMiddlewares(app, config);
+  initMiddlewares(app);
 
   /** Setting a Redis Hybrid Connection */
   initRedisConnection(app, config);
-
-  /** Setting a RabbitMQ Hybrid Connection */
-  // initRabbitMqConnection(app, config);
 
   /** Setting Swagger documentation */
   initSwaggerDocs(app);
@@ -44,7 +41,7 @@ async function bootstrap() {
 /**
  * Initialize global middleware
  */
-function initMiddlewares(app: INestApplication, config: ConfigService) {
+function initMiddlewares(app: INestApplication) {
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('/api/v1');
   app.use(morgan('short') as RequestHandler);
@@ -67,7 +64,6 @@ function initMiddlewares(app: INestApplication, config: ConfigService) {
   );
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
-  app.use(helmet());
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
   app.use(cors());
@@ -83,24 +79,6 @@ function initRedisConnection(app: INestApplication, config: ConfigService) {
       options: {
         host: config.get('REDIS_HOST'),
         port: config.get('REDIS_PORT'),
-      },
-    },
-    { inheritAppConfig: true },
-  );
-}
-
-/**
- * Hybrid RabbitMQ Microservice connection
- */
-function initRabbitMqConnection(app: INestApplication, config: ConfigService) {
-  app.connectMicroservice<MicroserviceOptions>(
-    {
-      transport: Transport.RMQ,
-      options: {
-        urls: [`${config.get('RABBIT_MQ_CONNECTION_URL')}`],
-        queueOptions: {
-          durable: false,
-        },
       },
     },
     { inheritAppConfig: true },

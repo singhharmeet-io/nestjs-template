@@ -6,7 +6,7 @@ import { REDIS_CLIENT } from 'src/shared/constants';
 export class StringRedisService implements OnModuleInit {
   private client: Redis;
 
-  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) { }
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
 
   onModuleInit() {
     this.client = this.redis;

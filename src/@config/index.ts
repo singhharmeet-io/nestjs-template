@@ -32,7 +32,6 @@ const config = {
     HOST: process.env.REDIS_HOST,
     PORT: process.env.REDIS_PORT,
   },
-  RABBIT_MQ_CONNECTION_URL: process.env.RABBIT_MQ_CONNECTION_URL,
 };
 
 export default config;

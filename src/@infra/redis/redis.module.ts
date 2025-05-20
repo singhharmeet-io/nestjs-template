@@ -39,7 +39,7 @@ import { StringRedisService } from './string.redis.service';
 export class RedisModule implements OnModuleDestroy {
   private readonly logger = new Logger(RedisModule.name);
 
-  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) { }
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
 
   async onModuleDestroy() {
     await this.redis.quit();

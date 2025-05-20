@@ -12,7 +12,7 @@ export class ResponseService {
     };
   }
 
-  error400(message: string, data: Record<string, any> = {}) {
+  error400(message: string, data: object = {}) {
     return {
       status: HttpStatus.BAD_REQUEST,
       timestamp: new Date().toISOString(),
@@ -21,7 +21,16 @@ export class ResponseService {
     };
   }
 
-  error403(message: string, data: Record<string, any> = {}) {
+  error401(message: string, data: object = {}) {
+    return {
+      status: HttpStatus.UNAUTHORIZED,
+      timestamp: new Date().toISOString(),
+      message,
+      data,
+    };
+  }
+
+  error403(message: string, data: Record<string, unknown> = {}) {
     return {
       error: true,
       status: HttpStatus.FORBIDDEN,
