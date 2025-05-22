@@ -1,6 +1,6 @@
 export const SWAGGER_OPERATIONS = {
-  CHECK_DEVICE_ID: {
-    summary: 'Check Device #ID',
-    description: 'Check Device #ID of a particular user',
+  REGISTER: {
+    summary: 'Register a user.',
+    description: 'Submit eamil and password to create a new user.',
   },
 };

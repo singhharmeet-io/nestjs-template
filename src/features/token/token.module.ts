@@ -4,18 +4,12 @@ import { TokenService } from './token.service';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { tokenProvider } from './token.provider';
 import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
   imports: [JwtModule.register({}), SharedModule],
   controllers: [TokenController],
-  providers: [
-    TokenService,
-    ...tokenProvider,
-    AccessTokenStrategy,
-    RefreshTokenStrategy,
-  ],
+  providers: [TokenService, AccessTokenStrategy, RefreshTokenStrategy],
   exports: [TokenService],
 })
 export class TokenModule {}

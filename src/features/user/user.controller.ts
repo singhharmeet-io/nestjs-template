@@ -1,36 +1,35 @@
-import { Controller } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Body, Post, Inject } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Sequelize } from 'sequelize';
+import SUCCESS_MSGS from 'src/shared/constants/success.constants';
 import { ResponseService } from 'src/shared/services/response.service';
+import { IRegisterDto } from './user.dtos';
+import { UserService } from './user.service';
+import { SEQUELIZE, SWAGGER_OPERATIONS } from 'src/shared/constants';
 
 @ApiTags('USER')
 @Controller('user')
 export class UserController {
   constructor(
     private readonly responseService: ResponseService,
-    private readonly sequelize: Sequelize,
+    @Inject(SEQUELIZE) private readonly sequelize: Sequelize,
+    private readonly userService: UserService,
   ) {}
 
-   @ApiBearerAuth()
-    @UseGuards(RefreshTokenGuard)
-    @Get('refresh')
-    async refreshTokens(@User() user: Record<string, unknown>) {
-      try {
-        const userId = user['userId'] as string;
-        const refreshToken = user['refreshToken'] as string;
-        const result = await this.tokensService.refresh(
-          userId,
-          'deviceId',
-          refreshToken,
-        );
-  
-        return this.responseService.success('Success', result!);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          return this.responseService.error400(error.message, error);
-        }
+  @ApiOperation(SWAGGER_OPERATIONS.REGISTER)
+  @Post('register')
+  async register(@Body() payload: IRegisterDto) {
+    const tx = await this.sequelize.transaction();
+
+    try {
+      const result = await this.userService.register(payload, tx);
+      await tx.commit();
+      return this.responseService.success(SUCCESS_MSGS.USER_REGISTERED, result);
+    } catch (error) {
+      await tx.rollback();
+      if (error instanceof Error) {
+        return this.responseService.error400(error.message, error);
       }
     }
   }
-  
 }

@@ -12,7 +12,7 @@ import config from 'src/@config';
         /** create tables with seed files */
         const sequelize = new Sequelize(postgreURI);
         sequelize.addModels([__dirname + '/entities/**/*.entity{.ts,.js}']);
-        await sequelize.sync({ force: false, alter: false });
+        await sequelize.sync({ force: false, alter: true });
 
         return sequelize;
       },

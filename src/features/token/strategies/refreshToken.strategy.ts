@@ -3,6 +3,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import config from '../../../@config';
+import { IJwtPayload } from './accessToken.strategy';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -10,6 +11,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   'jwt-refresh',
 ) {
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.JWT.REFRESH_SECRET,
@@ -17,7 +19,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-  validate(req: Request, payload: Record<string, any>) {
+  validate(req: Request, payload: IJwtPayload) {
     const refreshToken = req.get('Authorization')!.replace('Bearer', '').trim();
     if (!refreshToken) throw new UnauthorizedException();
     return { ...payload, refreshToken };

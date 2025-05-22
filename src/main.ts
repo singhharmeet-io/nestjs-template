@@ -14,6 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create<INestApplication>(AppModule, {
     logger: ['log', 'error', 'warn'],
   });
+  const logger = new Logger('bootstrap');
 
   /** initialize config service */
   const config = app.get<ConfigService>(ConfigService);
@@ -26,6 +27,7 @@ async function bootstrap() {
 
   /** Setting Swagger documentation */
   initSwaggerDocs(app);
+  logger.log('Swagger is available on /swaager-docs');
 
   const host: string = config.get('SERVICE_HOST')!;
   const port: number | string = config.get('SERVICE_PORT')!;
@@ -34,8 +36,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
   await app.listen(port, host);
 
-  const logger = new Logger('Bootstrap');
-  logger.log(`🚀 Application is running on http://${host}:${port}`);
+  logger.log(`Application is running on http://${host}:${port}`);
 }
 
 /**
@@ -90,22 +91,20 @@ function initRedisConnection(app: INestApplication, config: ConfigService) {
  */
 function initSwaggerDocs(app: INestApplication) {
   const config = new DocumentBuilder()
-    .setTitle('Wallet')
+    .setTitle('Boilerplate')
     .setDescription('API Documentation.')
     .setVersion('1.0')
     .addTag('Backend')
-    .addServer('http://localhost:3001')
+    .addServer('http://localhost:3000')
     .setLicense('MIT Licence', 'www.example.com')
-    .setContact(
-      'Harmeet Singh',
-      'www.example.com',
-      'harmeet.singh@antiersolutions.com',
-    )
+    .setContact('Harmeet Singh', 'https://harmeet.io', 'contact@harmeet.io')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger-docs', app, document);
+  SwaggerModule.setup('swagger-docs', app, document, {
+    useGlobalPrefix: false,
+  });
 }
 
 void bootstrap();

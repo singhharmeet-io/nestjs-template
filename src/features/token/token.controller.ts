@@ -19,14 +19,8 @@ export class TokenController {
   async refreshTokens(@User() user: Record<string, unknown>) {
     try {
       const userId = user['userId'] as string;
-      const refreshToken = user['refreshToken'] as string;
-      const result = await this.tokensService.refresh(
-        userId,
-        'deviceId',
-        refreshToken,
-      );
-
-      return this.responseService.success('Success', result!);
+      const result = await this.tokensService.refresh(userId);
+      return this.responseService.success('Success', result);
     } catch (error: unknown) {
       if (error instanceof Error) {
         return this.responseService.error400(error.message, error);
